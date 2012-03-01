@@ -11,7 +11,7 @@
     <script>
         $(document).ready(function () {
             var basic = new DelivR('basic');
-            $(basic).on('receive', function (e, file) {
+            basic.on('receive', function (e, file) {
                 var img = $('<img />')
                     .attr('src', file.dataUri())
                     .appendTo(document.body);

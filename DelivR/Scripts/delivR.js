@@ -23,6 +23,10 @@
 
         };
 
+        this.on = function (name, fn) {
+            $(instance).on(name, fn);
+        };
+
         connection.start();
     };
 })(this, this.jQuery);
