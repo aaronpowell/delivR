@@ -58,3 +58,7 @@ Finally to display the image you can interact with the file provided like so:
 	});
 	
 Done!
+
+# License
+
+[MIT](https://github.com/aaronpowell/delivR/blob/master/LICENSE.md)
