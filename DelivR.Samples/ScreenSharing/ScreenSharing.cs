@@ -15,6 +15,11 @@ namespace DelivR.Samples.ScreenSharing
                     this.SendFile(connectionId, (string)deserialized.data.mimeType, (string)deserialized.data.content);
                 };
 
+            conn.Error += err =>
+                {
+                    this.Send(connectionId, err);
+                };
+
             conn.Start().Wait();
 
             return base.OnConnectedAsync(request, groups, connectionId);
