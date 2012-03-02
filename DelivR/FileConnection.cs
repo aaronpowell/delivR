@@ -51,6 +51,19 @@ namespace DelivR
             });
         }
 
+        protected void SendFile(string connectionId, string mimeType, string data)
+        {
+            Send(connectionId, new
+            {
+                type = "receive",
+                data = new
+                {
+                    mimeType = mimeType,
+                    content = data
+                }
+            });
+        }
+
         private static dynamic EncodeImage(string filePath)
         {
             var fileString = string.Empty;
