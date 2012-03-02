@@ -23,6 +23,34 @@ namespace DelivR
             });
         }
 
+        protected void SendImage(string id, string filePath)
+        {
+            var file = EncodeImage(filePath);
+
+            Send(id, new
+            {
+                type = "receive",
+                data = new
+                {
+                    mimeType = "image/" + file.type,
+                    file.content
+                }
+            });
+        }
+
+        protected void SendFile(string mimeType, string data)
+        {
+            Send(new
+            {
+                type = "receive",
+                data = new
+                {
+                    mimeType = mimeType,
+                    content = data
+                }
+            });
+        }
+
         private static dynamic EncodeImage(string filePath)
         {
             var fileString = string.Empty;
@@ -40,19 +68,6 @@ namespace DelivR
                 type = file.Extension.Remove(0, 1).ToLower(),
                 content = fileString
             };
-        }
-
-        protected void SendImage(string id, string filePath)
-        {
-            var file = EncodeImage(filePath);
-            
-            Send(id, new {
-                type = "receive",
-                data = new {
-                    mimeType = "image/" + file.type,
-                    file.content
-                }
-            });
         }
     }
 }

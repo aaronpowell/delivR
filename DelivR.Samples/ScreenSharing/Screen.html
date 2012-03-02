@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Screen Sharing!</title>
+</head>
+<body>
+    <script type="text/javascript" src="../Scripts/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="../Scripts/jquery.signalR.js"></script>
+    <script type="text/javascript" src="../Scripts/DelivR.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var basic = new DelivR('screen');
+            basic.on('receive', function (e, file) {
+                var img = $('<img />')
+                    .attr('src', file.dataUri())
+                    .appendTo(document.body);
+            });
+        });
+    </script>
+
+</body>
+</html>

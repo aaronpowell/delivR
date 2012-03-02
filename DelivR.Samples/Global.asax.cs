@@ -14,6 +14,7 @@ namespace DelivR.Samples
         protected void Application_Start(object sender, EventArgs e)
         {
             RouteTable.Routes.MapConnection<Basic.Basic>("basic", "basic/{*operation}");
+            RouteTable.Routes.MapConnection<ScreenSharing.ScreenSharing>("screen", "screensharing/{*operation}");
         }
     }
 }
