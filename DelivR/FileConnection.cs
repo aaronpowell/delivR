@@ -87,10 +87,20 @@ namespace DelivR
 
                     image.Save(Path.Combine(DefaultFilePath, (string)deserialized.name), ImageFormat.Png);
 
-                    return Send(new {
+                    Send(new {
                         type = "uploaded"
                     });
-                }   
+
+                    Connection.Broadcast(new
+                    {
+                        type = "newFile",
+                        name = (string)deserialized.name
+                    });
+                }
+            }
+            else if (deserialized.type == "getFile")
+            {
+                SendImage(connectionId, Path.Combine(DefaultFilePath, (string)deserialized.name));
             }
             else
             {

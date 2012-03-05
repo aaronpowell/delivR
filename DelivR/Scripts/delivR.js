@@ -21,10 +21,11 @@
 
         connection.received(function (response) {
             var data;
-            if (response.type === '') {
+            if (response.type === 'receive') {
                 data = new File(response.data);
             } else {
-                data = {};
+                data = JSON.parse(JSON.stringify(response));
+                delete data.type;
             }
 
             $(instance).trigger(response.type, data);
@@ -52,6 +53,13 @@
             $(instance).on(name, fn);
 
             return instance;
+        };
+
+        this.get = function (name) {
+            connection.send(JSON.stringify({
+                type: 'getFile',
+                name: name
+            }));
         };
 
         connection.start();

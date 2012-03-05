@@ -10,11 +10,13 @@
         <button type="submit">Send file</button>
     </form>
 
+    <ul id="file-list">
+    </ul>
+
     <script type="text/javascript" src="../Scripts/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="../Scripts/jquery.signalR.js"></script>
     <script type="text/javascript" src="../Scripts/DelivR.js"></script>
-
-
+    
     <script>
         $(document).ready(function () {
             var uploader = new DelivR('uploader');
@@ -25,13 +27,40 @@
                 form.find('input[type="file"]').remove();
 
                 f.insertBefore(form.find(':first'));
+            })
+            .on('newFile', function (e, data) {
+                $('#file-list').append(
+                    $('<li />').html(data.name)
+                );
+            })
+            .on('receive', function (e, data) {
+                if (data.isImage()) {
+                    $('<img />')
+                        .attr('src', data.dataUri())
+                        .appendTo(document.body);
+                } else {
+                    $('<a />')
+                        .attr({
+                            href: data.dataUri(),
+                            target: '_blank'
+                        })
+                        .html('Click to download!')
+                        .appendTo(document.body);
+                }
             });
+
             $('#send').submit(function (e) {
                 e.preventDefault();
 
                 var file = $(this).find('input[type="file"]')[0].files[0];
 
                 uploader.upload(file);
+            });
+
+            $('#file-list').click(function (e) {
+                var target = e.target;
+
+                uploader.get($(target).html());
             });
         });
     </script>
