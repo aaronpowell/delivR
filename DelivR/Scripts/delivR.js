@@ -12,6 +12,10 @@
     };
 
     exports.DelivR = function (name) {
+        if (this.constructor !== exports.DelivR) {
+            return new exports.DelivR(name);
+        }
+
         var connection = $.connection(name),
             instance = this;
 
@@ -20,7 +24,7 @@
             if (response.type === '') {
                 data = new File(response.data);
             } else {
-                data = { };
+                data = {};
             }
 
             $(instance).trigger(response.type, data);
@@ -34,17 +38,20 @@
 
                 connection.send(JSON.stringify({
                     type: 'saveFile',
-                    mimeType: file.type, 
-                    name: file.fileName, 
+                    mimeType: file.type,
+                    name: file.fileName,
                     content: info[1]
                 }));
             };
 
             reader.readAsDataURL(file);
+            return instance;
         };
 
         this.on = function (name, fn) {
             $(instance).on(name, fn);
+
+            return instance;
         };
 
         connection.start();
