@@ -19,7 +19,12 @@
         $(document).ready(function () {
             var uploader = new DelivR('uploader');
             uploader.on('uploaded', function (e, data) {
-                console.log(arguments);
+                var form = $('#send'),
+                    f = form.find('input[type="file"]').clone();
+
+                form.find('input[type="file"]').remove();
+
+                f.insertBefore(form.find(':first'));
             });
             $('#send').submit(function (e) {
                 e.preventDefault();
