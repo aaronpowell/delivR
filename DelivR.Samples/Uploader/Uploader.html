@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+
+    <form id="send" method="put" action="/">
+        <input type="file" />
+        <button type="submit">Send file</button>
+    </form>
+
+    <script type="text/javascript" src="../Scripts/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="../Scripts/jquery.signalR.js"></script>
+    <script type="text/javascript" src="../Scripts/DelivR.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            var uploader = new DelivR('uploader');
+            uploader.on('uploaded', function (e, data) {
+                console.log(arguments);
+            });
+            $('#send').submit(function (e) {
+                e.preventDefault();
+
+                var file = $(this).find('input[type="file"]')[0].files[0];
+
+                uploader.upload(file);
+            });
+        });
+    </script>
+</body>
+</html>

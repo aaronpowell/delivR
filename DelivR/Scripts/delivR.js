@@ -1,4 +1,4 @@
-﻿(function (exports, $) {
+﻿(function (exports, $, FileReader, JSON) {
     'use strict';
     var imageFilter = /^(image\/gif|image\/jpeg|image\/png|image\/svg\+xml|image\/tiff)/i;
     var File = function (data) {
@@ -15,12 +15,32 @@
         var connection = $.connection(name),
             instance = this;
 
-        connection.received(function (data) {
-            $(instance).trigger(data.type, new File(data.data));
+        connection.received(function (response) {
+            var data;
+            if (response.type === '') {
+                data = new File(response.data);
+            } else {
+                data = { };
+            }
+
+            $(instance).trigger(response.type, data);
         });
 
         this.upload = function (file) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var res = reader.result,
+                    info = res.split(',');
 
+                connection.send(JSON.stringify({
+                    type: 'saveFile',
+                    mimeType: file.type, 
+                    name: file.fileName, 
+                    content: info[1]
+                }));
+            };
+
+            reader.readAsDataURL(file);
         };
 
         this.on = function (name, fn) {
@@ -29,4 +49,4 @@
 
         connection.start();
     };
-})(this, this.jQuery);
+})(this, this.jQuery, FileReader, this.JSON);

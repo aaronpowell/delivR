@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using SignalR;
 using SignalR.Hubs;
@@ -11,12 +14,18 @@ namespace DelivR
 {
     public abstract class FileConnection : PersistentConnection
     {
+        private static readonly Regex imageFilter = new Regex(@"^(image\/gif|image\/jpeg|image\/png|image\/svg\+xml|image\/tiff)");
+
+        public string DefaultFilePath { get; set; }
+
         protected void SendImage(string filePath)
         {
             var file = EncodeImage(filePath);
-            Send(new {
+            Send(new
+            {
                 type = "receive",
-                data = new {
+                data = new
+                {
                     mimeType = "image/" + file.type,
                     file.content
                 }
@@ -62,6 +71,38 @@ namespace DelivR
                     content = data
                 }
             });
+        }
+
+        protected override Task OnReceivedAsync(string connectionId, string data)
+        {
+            dynamic deserialized = _jsonSerializer.Parse(data);
+
+            if (deserialized.type == "saveFile")
+            {
+                var bytes = Convert.FromBase64String((string)deserialized.content);
+                using (var ms = new MemoryStream(bytes, 0, bytes.Length))
+                {
+                    ms.Write(bytes, 0, bytes.Length);
+                    var image = Image.FromStream(ms, true);
+
+                    image.Save(Path.Combine(DefaultFilePath, (string)deserialized.name), ImageFormat.Png);
+
+                    return Send(new {
+                        type = "uploaded"
+                    });
+                }   
+            }
+            else
+            {
+                OnCustomReceivedAsync(connectionId, data);
+            }
+
+            return base.OnReceivedAsync(connectionId, data);
+        }
+
+        protected virtual void OnCustomReceivedAsync(string connectionId, string data)
+        {
+
         }
 
         private static dynamic EncodeImage(string filePath)
