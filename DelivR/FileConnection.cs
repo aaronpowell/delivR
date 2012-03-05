@@ -18,36 +18,36 @@ namespace DelivR
 
         public string DefaultFilePath { get; set; }
 
-        protected void SendImage(string filePath)
+        protected void SendFile(string filePath)
         {
-            var file = EncodeImage(filePath);
+            var file = EncodeFile(filePath);
             Send(new
             {
                 type = "receive",
                 data = new
                 {
-                    mimeType = "image/" + file.type,
+                    mimeType = file.type,
                     file.content
                 }
             });
         }
 
-        protected void SendImage(string id, string filePath)
+        protected void SendFile(string id, string filePath)
         {
-            var file = EncodeImage(filePath);
+            var file = EncodeFile(filePath);
 
             Send(id, new
             {
                 type = "receive",
                 data = new
                 {
-                    mimeType = "image/" + file.type,
+                    mimeType = file.type,
                     file.content
                 }
             });
         }
 
-        protected void SendFile(string mimeType, string data)
+        protected void SendRawFile(string mimeType, string data)
         {
             Send(new
             {
@@ -60,7 +60,7 @@ namespace DelivR
             });
         }
 
-        protected void SendFile(string connectionId, string mimeType, string data)
+        protected void SendRawFile(string connectionId, string mimeType, string data)
         {
             Send(connectionId, new
             {
@@ -83,9 +83,37 @@ namespace DelivR
                 using (var ms = new MemoryStream(bytes, 0, bytes.Length))
                 {
                     ms.Write(bytes, 0, bytes.Length);
-                    var image = Image.FromStream(ms, true);
-
-                    image.Save(Path.Combine(DefaultFilePath, (string)deserialized.name), ImageFormat.Png);
+                    var mimeType = (string)deserialized.mimeType;
+                    if (imageFilter.IsMatch(mimeType))
+                    {
+                        ImageFormat format;
+                        switch (mimeType.Split('/')[1].ToLower())
+                        {
+                            case "jpeg":
+                                format = ImageFormat.Jpeg;
+                                break;
+                            case "gif":
+                                format = ImageFormat.Gif;
+                                break;
+                            case "tiff":
+                                format = ImageFormat.Tiff;
+                                break;
+                            case "svg+xml":
+                            case "png":
+                            default:
+                                format = ImageFormat.Png;
+                                break;
+                        }
+                        var image = Image.FromStream(ms, true);
+                        image.Save(Path.Combine(DefaultFilePath, (string)deserialized.name), ImageFormat.Png);
+                    }
+                    else
+                    {
+                        using (var fs = File.Create(Path.Combine(DefaultFilePath, (string)deserialized.name)))
+                        {
+                            ms.WriteTo(fs);
+                        }
+                    }
 
                     Send(new {
                         type = "uploaded"
@@ -100,7 +128,7 @@ namespace DelivR
             }
             else if (deserialized.type == "getFile")
             {
-                SendImage(connectionId, Path.Combine(DefaultFilePath, (string)deserialized.name));
+                SendFile(connectionId, Path.Combine(DefaultFilePath, (string)deserialized.name));
             }
             else
             {
@@ -115,7 +143,7 @@ namespace DelivR
 
         }
 
-        private static dynamic EncodeImage(string filePath)
+        private static dynamic EncodeFile(string filePath)
         {
             var fileString = string.Empty;
             var file = new FileInfo(filePath);
@@ -129,7 +157,7 @@ namespace DelivR
 
             return new
             {
-                type = file.Extension.Remove(0, 1).ToLower(),
+                type = MimeTypeLookup.GetMimeType(file.Extension.Remove(0, 1).ToLower()),
                 content = fileString
             };
         }

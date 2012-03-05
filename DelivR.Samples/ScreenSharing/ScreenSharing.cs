@@ -12,7 +12,7 @@ namespace DelivR.Samples.ScreenSharing
             conn.Received += data =>
                 {
                     dynamic deserialized = this._jsonSerializer.Parse(data);
-                    this.SendFile(connectionId, (string)deserialized.data.mimeType, (string)deserialized.data.content);
+                    this.SendRawFile(connectionId, (string)deserialized.data.mimeType, (string)deserialized.data.content);
                 };
 
             conn.Error += err =>

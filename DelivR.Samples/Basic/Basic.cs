@@ -13,7 +13,7 @@ namespace DelivR.Samples.Basic
     {
         protected override Task OnConnectedAsync(IRequest request, IEnumerable<string> groups, string connectionId)
         {
-            this.SendImage(connectionId, Path.Combine(@"C:\_Projects\github\DelivR\DelivR.Samples\Basic", "signalr_18579_lg.gif"));
+            this.SendFile(connectionId, Path.Combine(@"C:\_Projects\github\DelivR\DelivR.Samples\Basic", "signalr_18579_lg.gif"));
             return base.OnConnectedAsync(request, groups, connectionId);
         }
     }
