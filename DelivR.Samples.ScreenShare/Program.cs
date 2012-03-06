@@ -31,7 +31,7 @@ namespace DelivR.Samples.ScreenShare
                 {
                     while (true)
                     {
-                        Thread.Sleep(5000);
+                        Thread.Sleep(1000);
 
                         var sc = new ScreenCapture();
 
