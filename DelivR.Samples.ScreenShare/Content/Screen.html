@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Screen Sharing!</title>
+</head>
+<body>
+    <canvas id="remote"></canvas>
+
+    <script type="text/javascript" src="/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="/jquery.signalR.js"></script>
+    <script type="text/javascript" src="/delivR.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var basic = new DelivR('screensharing'),
+                remote = document.getElementById('remote'),
+                ctx = remote.getContext('2d'),
+                width = $(document).width(),
+                height = $(document).height();
+
+            remote.width = width;
+            remote.height = height;
+
+            basic.on('receive', function (e, file) {
+                console.log('testing');
+                ctx.clearRect(0, 0, width, height);
+
+                var img = new Image();
+                img.onload = function () {
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = file.dataUri();
+            });
+        });
+    </script>
+
+</body>
+</html>

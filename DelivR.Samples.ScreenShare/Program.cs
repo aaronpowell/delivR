@@ -8,6 +8,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Firefly.Http;
+using Gate.Builder;
+using Owin;
 using SignalR;
 using SignalR.Hosting.Self;
 using SignalR.Infrastructure;
@@ -19,17 +22,16 @@ namespace DelivR.Samples.ScreenShare
     {
         static void Main(string[] args)
         {
-            string url = "http://localhost:8081/";
-            var server = new Server(url);
-            server.MapConnection<ScreenSharing>("/screen");
+            var builder = new AppBuilder();
+            var app = builder.Build(Startup.Configuration);
 
-            server.Start();
+            var server = new ServerFactory().Create(app, 8081);
 
             ThreadPool.QueueUserWorkItem(_ =>
                 {
                     while (true)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(5000);
 
                         var sc = new ScreenCapture();
 
@@ -42,9 +44,9 @@ namespace DelivR.Samples.ScreenShare
                             var s = Convert.ToBase64String(ms.ToArray());
 
                             var connection = new FileConnectionManager<ScreenSharing>(
-                                server.DependencyResolver.Resolve<IMessageBus>(),
-                                server.DependencyResolver.Resolve<IJsonSerializer>(),
-                                server.DependencyResolver.Resolve<ITraceManager>()
+                                Startup.DependencyResolver.Resolve<IMessageBus>(),
+                                Startup.DependencyResolver.Resolve<IJsonSerializer>(),
+                                Startup.DependencyResolver.Resolve<ITraceManager>()
                                 );
 
                             connection.SendFile("image/png", s);
@@ -54,7 +56,8 @@ namespace DelivR.Samples.ScreenShare
                     }
                 });
 
-            Console.WriteLine("Server running on {0}", url);
+            Console.WriteLine("Running on localhost:8081");
+
             Console.ReadKey();
         }
     }

@@ -5,9 +5,11 @@ namespace DelivR.Samples.ScreenSharing
 {
     public class ScreenSharing : FileConnection
     {
+        private SignalR.Client.Connection conn;
+
         protected override Task OnConnectedAsync(IRequest request, IEnumerable<string> groups, string connectionId)
         {
-            var conn = new SignalR.Client.Connection("http://localhost:8081/screen");
+            conn = new SignalR.Client.Connection("http://localhost:8081/screen");
 
             conn.Received += data =>
                 {
@@ -15,14 +17,22 @@ namespace DelivR.Samples.ScreenSharing
                     this.SendRawFile(connectionId, (string)deserialized.data.mimeType, (string)deserialized.data.content);
                 };
 
-            conn.Error += err =>
-                {
-                    this.Send(connectionId, err);
-                };
+            conn.Closed += () =>
+            {
+                this.Send(new {
+                    type = "death"
+                });
+            };
 
-            conn.Start().Wait();
+            conn.Reconnected += () =>
+            {
+                this.Send(new { type = "reconnected" });
+            };
+
+            conn.Start();
 
             return base.OnConnectedAsync(request, groups, connectionId);
         }
+
     }
 }

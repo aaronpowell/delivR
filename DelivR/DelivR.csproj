@@ -123,7 +123,7 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PreBuildEvent>xcopy $(ProjectDir)\Scripts\DelivR.js $(SolutionDir)\DelivR.Samples\Scripts /Y
-</PreBuildEvent>
+xcopy $(ProjectDir)\Scripts\DelivR.js $(SolutionDir)\DelivR.Samples.ScreenShare\Content /Y</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
