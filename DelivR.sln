@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 11
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelivR", "DelivR\DelivR.csproj", "{F9A92DF9-5D84-4C35-BD83-4DD0145F2958}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelivR.Samples", "DelivR.Samples\DelivR.Samples.csproj", "{0B5CFBFF-E4E5-4660-8AA7-B13B06D4BDA5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelivR.Samples.ScreenShare", "DelivR.Samples.ScreenShare\DelivR.Samples.ScreenShare.csproj", "{E5C063B1-5C76-4182-B5B9-78FE2BB4CF96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{36BDD86E-30AE-43E9-B5AF-67D3A8B7C360}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
