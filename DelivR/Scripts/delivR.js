@@ -1,4 +1,5 @@
-﻿(function (exports, $, FileReader, JSON) {
+﻿/// <reference path="jquery-1.7.1-vsdoc.js" />
+(function (exports, $, FileReader, JSON) {
     'use strict';
     var imageFilter = /^(image\/gif|image\/jpeg|image\/png|image\/svg\+xml|image\/tiff)/i;
     var File = function (data) {
